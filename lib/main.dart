@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:helloworld/screens/todo/todo.dart';
+import 'package:helloworld/state/todo_provider.dart';
+import 'package:provider/provider.dart';
+
+import 'model/todo_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,114 +34,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<todoData> _todoList = [];
-  final title = 'ToDoアプリ';
-
-  void _todoAdd(String todo) {
-    setState(() {
-      _todoList.add(todoData(todo, false));
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(),
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'タスク',
-              style: TextStyle(fontSize: 30),
-            ),
-            SizedBox(
-              height: 500,
-              width: 400,
-              child: ListView.builder(
-                itemCount: _todoList.length,
-                itemBuilder: (
-                  BuildContext context,
-                  int index,
-                ) {
-                  return Card(
-                    child: Container(
-                      child: Column(
-                        children: <Widget>[
-                          CheckboxListTile(
-                            activeColor: Colors.blue,
-                            title: Text(_todoList[index] != null
-                                ? _todoList[index].name
-                                : ''),
-                            subtitle:
-                                Text(_todoList[index].flg ? '達成済' : '未達成'),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            value: _todoList[index] != null
-                                ? _todoList[index].flg
-                                : false,
-                            onChanged: (value) {
-                              setState(() {
-                                _todoList.removeAt(index);
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          InputDialog(context);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+    return ChangeNotifierProvider(
+      create: (context) => TodoNotifier(),
+      child: const ToDo(),
     );
   }
-
-  Future<void> InputDialog(BuildContext context) async {
-    String todo = '';
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('ToDo Add'),
-            content: TextField(
-              decoration: InputDecoration(hintText: 'ここに入力'),
-              onChanged: (value) => todo = value,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('キャンセル'),
-              ),
-              TextButton(
-                onPressed: () {
-                  _todoAdd(todo);
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        });
-  }
-}
-
-class todoData {
-  String name;
-  bool flg;
-
-  todoData(this.name, this.flg);
 }

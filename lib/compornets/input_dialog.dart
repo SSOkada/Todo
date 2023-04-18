@@ -1,16 +1,38 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:provider/provider.dart';
 
-class InputDialog extends StatefulWidget {
-  const InputDialog({super.key});
+import '../state/todo_provider.dart';
 
-  @override
-  State<InputDialog> createState() => _InputDialogState();
-}
-
-class _InputDialogState extends State<InputDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
+@override
+Future<void> InputDialog(BuildContext context) async {
+  String todo = '';
+  final todoProvider = Provider.of<TodoNotifier>(context, listen: false);
+  return await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('ToDo Add'),
+          content: TextField(
+            decoration: InputDecoration(hintText: 'ここに入力'),
+            onChanged: (value) => todo = value,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('キャンセル'),
+            ),
+            TextButton(
+              onPressed: () {
+                todoProvider.todoAdd(todo);
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      });
 }

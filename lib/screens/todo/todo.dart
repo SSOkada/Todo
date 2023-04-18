@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:helloworld/state/todo_provider.dart';
+import 'package:provider/provider.dart';
 
+import '../../compornets/input_dialog.dart';
 import '../../model/todo_data.dart';
 
 class ToDo extends StatefulWidget {
@@ -12,17 +15,11 @@ class ToDo extends StatefulWidget {
 }
 
 class _ToDoState extends State<ToDo> {
-  final List<todoData> _todoList = [];
   final title = 'ToDoアプリ';
-
-  void _todoAdd(String todo) {
-    setState(() {
-      _todoList.add(todoData(todo, false));
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final todoProvider = Provider.of<TodoNotifier>(context);
     return Scaffold(
       drawer: Drawer(),
       appBar: AppBar(
@@ -40,7 +37,7 @@ class _ToDoState extends State<ToDo> {
               height: 500,
               width: 400,
               child: ListView.builder(
-                itemCount: _todoList.length,
+                itemCount: todoProvider.todoList.length,
                 itemBuilder: (
                   BuildContext context,
                   int index,
@@ -51,18 +48,19 @@ class _ToDoState extends State<ToDo> {
                         children: <Widget>[
                           CheckboxListTile(
                             activeColor: Colors.blue,
-                            title: Text(_todoList[index] != null
-                                ? _todoList[index].name
+                            title: Text(todoProvider.todoList[index] != null
+                                ? todoProvider.todoList[index].name
                                 : ''),
-                            subtitle:
-                                Text(_todoList[index].flg ? '達成済' : '未達成'),
+                            subtitle: Text(todoProvider.todoList[index].flg
+                                ? '達成済'
+                                : '未達成'),
                             controlAffinity: ListTileControlAffinity.leading,
-                            value: _todoList[index] != null
-                                ? _todoList[index].flg
+                            value: todoProvider.todoList[index] != null
+                                ? todoProvider.todoList[index].flg
                                 : false,
                             onChanged: (value) {
                               setState(() {
-                                _todoList.removeAt(index);
+                                todoProvider.todoList.removeAt(index);
                               });
                             },
                           )
@@ -78,6 +76,7 @@ class _ToDoState extends State<ToDo> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          print('クリック');
           InputDialog(context);
         },
         tooltip: 'Increment',
