@@ -26,8 +26,7 @@ Future<void> InputDialog(BuildContext context, WidgetRef ref) async {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(
-              ref.watch(todoProvider)[ref.watch(todoProvider).length - 1].name),
+          title: Text('ToDo Add'),
           content: TextField(
             decoration: InputDecoration(hintText: 'ここに入力'),
             onChanged: (value) => todo = value,
@@ -41,8 +40,8 @@ Future<void> InputDialog(BuildContext context, WidgetRef ref) async {
             ),
             TextButton(
               onPressed: () {
-                todoData todoD =
-                    todoData(ref.watch(todoProvider).length + 1, todo, false);
+                int nextId = ref.watch(todoProvider.notifier).nextId();
+                todoData todoD = todoData(nextId, todo, false);
                 ref.watch(todoProvider.notifier).addToDo(todoD);
                 print('ref.watch(_todoProvider).length');
                 print(ref.watch(todoProvider).length);

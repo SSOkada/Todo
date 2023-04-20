@@ -27,10 +27,6 @@ class ToDo extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(ref.watch(test)),
-            Text(ref
-                .watch(todoProvider)[ref.watch(todoProvider).length - 1]
-                .name),
             const Text(
               'タスク',
               style: TextStyle(fontSize: 30),
@@ -66,7 +62,9 @@ class ToDo extends HookConsumerWidget {
                                 ? ref.watch(todoProvider)[index].flg
                                 : false,
                             onChanged: (value) {
-                              // ref.watch(todoProvider)
+                              ref
+                                  .watch(todoProvider.notifier)
+                                  .deleteTodo(index);
                             },
                           )
                         ],

@@ -12,4 +12,19 @@ class TodoNotifier extends StateNotifier<List<todoData>> {
   void addToDo(todoData todo) {
     state = [...state, todo];
   }
+
+  void deleteTodo(int index) {
+    state = List.from(state)..removeAt(index);
+  }
+
+  int nextId() {
+    int id = 0;
+    state.forEach((todo) {
+      if (todo.id > id) {
+        id = todo.id;
+      }
+    });
+    id++;
+    return id;
+  }
 }
