@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:helloworld/main.dart';
 import 'package:helloworld/state/todo_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart';
 
 import '../../compornets/input_dialog.dart';
 import '../../model/todo_data.dart';
+import '../../state/test.dart';
 
-class ToDo extends StatefulWidget {
-  const ToDo({super.key});
+final test = StateNotifierProvider<Test, String>((ref) => Test());
 
-  @override
-  State<ToDo> createState() => _ToDoState();
-}
-
-class _ToDoState extends State<ToDo> {
+class ToDo extends HookConsumerWidget {
   final title = 'ToDoアプリ';
 
   @override
-  Widget build(BuildContext context) {
-    final todoProvider = Provider.of<TodoNotifier>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       drawer: Drawer(),
       appBar: AppBar(
@@ -29,6 +27,10 @@ class _ToDoState extends State<ToDo> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(ref.watch(test)),
+            Text(ref
+                .watch(todoProvider)[ref.watch(todoProvider).length - 1]
+                .name),
             const Text(
               'タスク',
               style: TextStyle(fontSize: 30),
@@ -37,31 +39,34 @@ class _ToDoState extends State<ToDo> {
               height: 500,
               width: 400,
               child: ListView.builder(
-                itemCount: todoProvider.todoList.length,
+                itemCount: ref.watch(todoProvider).length,
                 itemBuilder: (
                   BuildContext context,
                   int index,
                 ) {
+                  print('index');
+                  print(index);
+                  print(ref.watch(todoProvider).length);
                   return Card(
                     child: Container(
                       child: Column(
                         children: <Widget>[
                           CheckboxListTile(
                             activeColor: Colors.blue,
-                            title: Text(todoProvider.todoList[index] != null
-                                ? todoProvider.todoList[index].name
+                            title: Text(ref.watch(todoProvider)[index] != null
+                                ? ref.watch(todoProvider)[index].id.toString() +
+                                    '     ' +
+                                    ref.watch(todoProvider)[index].name
                                 : ''),
-                            subtitle: Text(todoProvider.todoList[index].flg
+                            subtitle: Text(ref.watch(todoProvider)[index].flg
                                 ? '達成済'
                                 : '未達成'),
                             controlAffinity: ListTileControlAffinity.leading,
-                            value: todoProvider.todoList[index] != null
-                                ? todoProvider.todoList[index].flg
+                            value: ref.watch(todoProvider)[index] != null
+                                ? ref.watch(todoProvider)[index].flg
                                 : false,
                             onChanged: (value) {
-                              setState(() {
-                                todoProvider.todoList.removeAt(index);
-                              });
+                              // ref.watch(todoProvider)
                             },
                           )
                         ],
@@ -77,7 +82,10 @@ class _ToDoState extends State<ToDo> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print('クリック');
-          InputDialog(context);
+          ref.read(test.notifier).addToDo('oooo');
+          InputDialog(context, ref);
+          print(ref.watch(todoProvider).length);
+          print('ref.watch(_todoProvider).length');
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

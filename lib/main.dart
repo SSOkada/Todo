@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:helloworld/screens/todo/todo.dart';
 import 'package:helloworld/state/todo_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart';
 
 import 'model/todo_data.dart';
 
+final _todoProvider = StateNotifierProvider<TodoNotifier, List<todoData>>(
+    (ref) => TodoNotifier());
+
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,25 +28,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ToDo(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends HookConsumerWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => TodoNotifier(),
-      child: const ToDo(),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ToDo();
   }
 }

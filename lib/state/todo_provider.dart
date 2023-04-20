@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 
 import '../model/todo_data.dart';
 
-class TodoNotifier with ChangeNotifier {
-  final List<todoData> _todoList = [];
+final todoProvider = StateNotifierProvider<TodoNotifier, List<todoData>>(
+    (ref) => TodoNotifier());
 
-  List<todoData> get todoList => _todoList;
-
-  void todoAdd(String todo) {
-    _todoList.add(todoData(todo, false));
-    notifyListeners();
-  }
-
-  void todoRemove(int index) {
-    _todoList.removeAt(index);
-    notifyListeners();
+class TodoNotifier extends StateNotifier<List<todoData>> {
+  TodoNotifier() : super([todoData(1, 'aa', false)]);
+  void addToDo(todoData todo) {
+    state = [...state, todo];
   }
 }
-
-final todoProvider = ChangeNotifierProvider<TodoNotifier>(create: (ref) {
-  return TodoNotifier();
-});
