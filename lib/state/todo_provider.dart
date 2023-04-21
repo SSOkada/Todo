@@ -17,6 +17,13 @@ class TodoNotifier extends StateNotifier<List<todoData>> {
     state = List.from(state)..removeAt(index);
   }
 
+  List<todoData> filterTodo(String value) {
+    List<todoData> filterAddTodo =
+        state.where((todoData todo) => todo.name.contains(value)).toList();
+    print(filterAddTodo);
+    return filterAddTodo;
+  }
+
   int nextId() {
     int id = 0;
     state.forEach((todo) {
